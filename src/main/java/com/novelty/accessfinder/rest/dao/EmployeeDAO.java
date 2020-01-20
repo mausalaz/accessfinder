@@ -3,7 +3,7 @@ package com.novelty.accessfinder.rest.dao;
 import org.springframework.stereotype.Repository;
 
 import com.novelty.accessfinder.rest.model.Employees;
-import com.novelty.accessfinder.rest.entity.Employee;
+import com.novelty.accessfinder.rest.entity.EmployeeEntity;
  
 @Repository
 public class EmployeeDAO 
@@ -12,9 +12,9 @@ public class EmployeeDAO
      
     static
     {
-        list.getEmployeeList().add(new Employee(1, "Lokesh", "Gupta", "howtodoinjava@gmail.com"));
-        list.getEmployeeList().add(new Employee(2, "Alex", "Kolenchiskey", "abc@gmail.com"));
-        list.getEmployeeList().add(new Employee(3, "David", "Kameron", "titanic@gmail.com"));
+        list.getEmployeeList().add(new EmployeeEntity(1L, "Lokesh", "Gupta", "howtodoinjava@gmail.com"));
+        list.getEmployeeList().add(new EmployeeEntity(2L, "Alex", "Kolenchiskey", "abc@gmail.com"));
+        list.getEmployeeList().add(new EmployeeEntity(3L, "David", "Kameron", "titanic@gmail.com"));
     }
      
     public Employees getAllEmployees() 
@@ -22,7 +22,7 @@ public class EmployeeDAO
         return list;
     }
      
-    public void addEmployee(Employee employee) {
+    public void addEmployee(EmployeeEntity employee) {
         list.getEmployeeList().add(employee);
     }
 }

@@ -1,46 +1,56 @@
 package com.novelty.accessfinder.rest.controller;
 
-import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
  
-import com.novelty.accessfinder.rest.dao.EmployeeDAO;
-import com.novelty.accessfinder.rest.entity.Employee;
-import com.novelty.accessfinder.rest.model.Employees;
+import com.novelty.accessfinder.rest.entity.EmployeeEntity;
+import com.novelty.accessfinder.rest.exception.RecordNotFoundException;
+import com.novelty.accessfinder.rest.service.EmployeeService;
  
 @RestController
-@RequestMapping(path = "/employees")
+@RequestMapping("/employees")
 public class EmployeeController 
 {
     @Autowired
-    private EmployeeDAO employeeDao;
-     
-    @GetMapping(path="/algo", produces = "application/json")
-    public Employees getEmployees() 
-    {
-        return employeeDao.getAllEmployees();
+    EmployeeService service;
+ 
+    @GetMapping("/getAll}")
+    public ResponseEntity<List<EmployeeEntity>> getAllEmployees() {
+        List<EmployeeEntity> list = service.getAllEmployees();
+ 
+        return new ResponseEntity<List<EmployeeEntity>>(list, new HttpHeaders(), HttpStatus.OK);
     }
-     
-    @PostMapping(path= "/", consumes = "application/json", produces = "application/json")
-    public ResponseEntity<Object> addEmployee(@RequestBody Employee employee) 
-    {
-        Integer id = employeeDao.getAllEmployees().getEmployeeList().size() + 1;
-        employee.setId(id);
-         
-        employeeDao.addEmployee(employee);
-         
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                                    .path("/{id}")
-                                    .buildAndExpand(employee.getId())
-                                    .toUri();
-         
-        return ResponseEntity.created(location).build();
+ 
+    @GetMapping("/{id}")
+    public ResponseEntity<EmployeeEntity> getEmployeeById(@PathVariable("id") Long id) 
+                                                    throws RecordNotFoundException {
+        EmployeeEntity entity = service.getEmployeeById(id);
+ 
+        return new ResponseEntity<EmployeeEntity>(entity, new HttpHeaders(), HttpStatus.OK);
     }
+ 
+    @PostMapping
+    public ResponseEntity<EmployeeEntity> createOrUpdateEmployee(EmployeeEntity employee)
+                                                    throws RecordNotFoundException {
+        EmployeeEntity updated = service.createOrUpdateEmployee(employee);
+        return new ResponseEntity<EmployeeEntity>(updated, new HttpHeaders(), HttpStatus.OK);
+    }
+ 
+    @DeleteMapping("/{id}")
+    public HttpStatus deleteEmployeeById(@PathVariable("id") Long id) 
+                                                    throws RecordNotFoundException {
+        service.deleteEmployeeById(id);
+        return HttpStatus.FORBIDDEN;
+    }
+ 
 }
